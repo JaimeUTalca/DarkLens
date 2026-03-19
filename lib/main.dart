@@ -49,8 +49,8 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
   bool _isAdLoaded = false;
 
   final String _adUnitId = Platform.isAndroid 
-      ? 'ca-app-pub-3940256099942544/6300978111' // Test Android Ad
-      : 'ca-app-pub-3940256099942544/2934735716'; // Test iOS Ad
+      ? 'ca-app-pub-4566173049235624/3975499794' // Real Android Ad
+      : 'ca-app-pub-4566173049235624/3975499794'; // Real iOS Ad
 
   @override
   void initState() {
