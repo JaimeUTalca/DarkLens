@@ -5,9 +5,43 @@ import 'package:gal/gal.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 List<CameraDescription> cameras = [];
 bool hasAcceptedDisclaimer = false;
+
+// --- DICCIONARIO DE TRADUCCIONES (i18n) ---
+final Map<String, Map<String, String>> _localizedStrings = {
+  'en': {
+    'title': 'Terms & Ethical Use',
+    'body': 'The DarkLens app is designed strictly for personal security, journalism, and ethical documentation.\n\nUsing this app to record individuals without their explicit consent may violate strict local, state, or national privacy laws.\n\nThe developer and creators of DarkLens expressly disclaim all legal, civil, and criminal liability arising from the misuse of this tool.\n\nIMPORTANT MANDATORY SAFEGUARDS:\n\n1. Ensure you are fully aware of and comply with audio/video recording laws in your region (e.g., one-party or two-party consent laws).\n2. It is strictly prohibited to use this app in areas with a reasonable expectation of privacy (e.g., restrooms, changing rooms, private property).\n3. Never use this app for harassment, defamation, espionage, or any other illicit or immoral purpose.\n\nBy tapping "ACCEPT", you declare that you are of legal age, will obey all applicable laws, and assume full, exclusive, and absolute responsibility for your recording actions.',
+    'accept': 'ACCEPT AND CONTINUE',
+    'reject': 'REJECT AND EXIT',
+    'rear': 'REAR',
+    'front': 'FRONT',
+  },
+  'es': {
+    'title': 'Términos y Uso Ético',
+    'body': 'La aplicación DarkLens ha sido diseñada exclusivamente para fines de seguridad personal, periodismo ciudadano y documentación ética.\n\nEl uso de esta aplicación para grabar a personas sin su consentimiento puede violar estrictas leyes de privacidad locales, estatales o nacionales.\n\nEl desarrollador y los creadores de DarkLens se desligan legal, penal y civilmente de cualquier responsabilidad derivada del mal uso de esta herramienta.\n\nRESGUARDOS IMPORTANTES OBLIGATORIOS:\n\n1. Asegúrate de conocer y acatar plenamente las leyes de grabación de audio y video de tu país (ej. leyes de consentimiento de una o dos partes).\n2. Queda estrictamente prohibido utilizar esta aplicación en áreas donde exista una expectativa razonable de privacidad (ej. baños, vestidores, propiedad privada ajena).\n3. Nunca utilices esta aplicación para realizar actos de acoso, difamación, espionaje o cualquier otro propósito de naturaleza ilícita o inmoral.\n\nAl pulsar "ACEPTAR", declaras que eres mayor de edad, que cumplirás con las leyes aplicables y asumes la total, exclusiva y absoluta responsabilidad de tus actos de grabación.',
+    'accept': 'ACEPTAR Y CONTINUAR',
+    'reject': 'RECHAZAR Y SALIR',
+    'rear': 'PRINCIPAL',
+    'front': 'FRONTAL',
+  },
+};
+
+String _t(String key) {
+  // Obtener el idioma nativo del teléfono
+  String languageCode = ui.PlatformDispatcher.instance.locale.languageCode;
+  
+  // Si el teléfono no está en español, el inglés será el idioma de fábrica/universal
+  if (languageCode != 'es') {
+    languageCode = 'en';
+  }
+  
+  return _localizedStrings[languageCode]?[key] ?? key;
+}
+// ------------------------------------------
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,16 +90,18 @@ class DisclaimerScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 36),
-                  SizedBox(width: 12),
-                  Text(
-                    'Términos y Uso Ético',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  const Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 36),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      _t('title'),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -74,7 +110,7 @@ class DisclaimerScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Text(
-                    '''La aplicación DarkLens ha sido diseñada exclusivamente para fines de seguridad personal, periodismo ciudadano y documentación ética.\n\nEl uso de esta aplicación para grabar a personas sin su consentimiento puede violar estrictas leyes de privacidad locales, estatales o nacionales.\n\nEl desarrollador y los creadores de DarkLens se desligan legal, penal y civilmente de cualquier responsabilidad derivada del mal uso de esta herramienta.\n\nRESGUARDOS IMPORTANTES OBLIGATORIOS:\n\n1. Asegúrate de conocer y acatar plenamente las leyes de grabación de audio y video de tu país (ej. leyes de consentimiento de una o dos partes).\n2. Queda estrictamente prohibido utilizar esta aplicación en áreas donde exista una expectativa razonable de privacidad (ej. baños, vestidores, propiedad privada ajena).\n3. Nunca utilices esta aplicación para realizar actos de acoso, difamación, espionaje o cualquier otro propósito de naturaleza ilícita o inmoral.\n\nAl pulsar "ACEPTAR", declaras que eres mayor de edad, que cumplirás con las leyes aplicables y asumes la total, exclusiva y absoluta responsabilidad de tus actos de grabación.''',
+                    _t('body'),
                     style: TextStyle(
                       fontSize: 15,
                       height: 1.5,
@@ -110,9 +146,10 @@ class DisclaimerScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text(
-                    'ACEPTAR Y CONTINUAR',
-                    style: TextStyle(
+                  child: Text(
+                    _t('accept'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -130,9 +167,10 @@ class DisclaimerScreen extends StatelessWidget {
                     // Cerrar la app
                     SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                   },
-                  child: const Text(
-                    'RECHAZAR Y SALIR',
-                    style: TextStyle(
+                  child: Text(
+                    _t('reject'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
                     ),
@@ -307,21 +345,20 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildCameraButton(
-              title: 'PRINCIPAL',
+              title: _t('rear'),
               icon: Icons.camera_rear,
               color: Colors.red.shade700,
               onTap: () => _startRecording(CameraLensDirection.back),
             ),
             const SizedBox(height: 60),
             _buildCameraButton(
-              title: 'FRONTAL',
+              title: _t('front'),
               icon: Icons.camera_front,
               color: Colors.indigo.shade600,
               onTap: () => _startRecording(CameraLensDirection.front),
             ),
-            // Banner re-ubicado debajo de los botones principales
             if (_isAdLoaded && _bannerAd != null) ...[
-              const SizedBox(height: 80),
+              const SizedBox(height: 80), // Espacio largo para que no estorbe
               SizedBox(
                 width: _bannerAd!.size.width.toDouble(),
                 height: _bannerAd!.size.height.toDouble(),
