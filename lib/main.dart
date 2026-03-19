@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:gal/gal.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'dart:io';
 
 List<CameraDescription> cameras = [];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
-  
   try {
     cameras = await availableCameras();
   } on CameraException catch (e) {
@@ -45,46 +41,16 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
   bool _isRecording = false;
   bool _isStopping = false;
 
-  BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
-
-  final String _adUnitId = Platform.isAndroid 
-      ? 'ca-app-pub-3940256099942544/6300978111' // Test Android Ad
-      : 'ca-app-pub-3940256099942544/2934735716'; // Test iOS Ad
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadAd();
-  }
-
-  void _loadAd() {
-    _bannerAd = BannerAd(
-      adUnitId: _adUnitId,
-      request: const AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          if (mounted) {
-            setState(() {
-              _isAdLoaded = true;
-            });
-          }
-        },
-        onAdFailedToLoad: (ad, err) {
-          print('Ad failed to load: $err');
-          ad.dispose();
-        },
-      ),
-    )..load();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _cameraController?.dispose();
-    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -188,41 +154,25 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildCameraButton(
-                  title: 'PRINCIPAL',
-                  icon: Icons.camera_rear,
-                  color: Colors.red.shade700,
-                  onTap: () => _startRecording(CameraLensDirection.back),
-                ),
-                const SizedBox(height: 60),
-                _buildCameraButton(
-                  title: 'FRONTAL',
-                  icon: Icons.camera_front,
-                  color: Colors.indigo.shade600,
-                  onTap: () => _startRecording(CameraLensDirection.front),
-                ),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildCameraButton(
+              title: 'PRINCIPAL',
+              icon: Icons.camera_rear,
+              color: Colors.red.shade700,
+              onTap: () => _startRecording(CameraLensDirection.back),
             ),
-          ),
-          // Mostrar banner abajo si está cargado
-          if (_isAdLoaded && _bannerAd != null)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SafeArea(
-                child: SizedBox(
-                  width: _bannerAd!.size.width.toDouble(),
-                  height: _bannerAd!.size.height.toDouble(),
-                  child: AdWidget(ad: _bannerAd!),
-                ),
-              ),
+            const SizedBox(height: 60),
+            _buildCameraButton(
+              title: 'FRONTAL',
+              icon: Icons.camera_front,
+              color: Colors.indigo.shade600,
+              onTap: () => _startRecording(CameraLensDirection.front),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
