@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:gal/gal.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
 List<CameraDescription> cameras = [];
+bool hasAcceptedDisclaimer = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,14 @@ Future<void> main() async {
   } on CameraException catch (e) {
     print('Error getting cameras: $e');
   }
+
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    hasAcceptedDisclaimer = prefs.getBool('accepted_disclaimer') ?? false;
+  } catch (e) {
+    print('Error getting preferences: $e');
+  }
+
   runApp(const DarkVideoApp());
 }
 
@@ -28,7 +38,7 @@ class DarkVideoApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'DarkLens',
       theme: ThemeData.dark(),
-      home: const DisclaimerScreen(),
+      home: hasAcceptedDisclaimer ? const MainDarkVideoScreen() : const DisclaimerScreen(),
     );
   }
 }
@@ -84,7 +94,15 @@ class DisclaimerScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    try {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('accepted_disclaimer', true);
+                    } catch(e) {
+                      print('Error saving: $e');
+                    }
+
+                    if (!context.mounted) return;
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
