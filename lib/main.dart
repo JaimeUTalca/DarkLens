@@ -152,7 +152,7 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
       if (controller.value.isRecordingVideo) {
         final XFile videoFile = await controller.stopVideoRecording();
         await Gal.putVideo(videoFile.path, album: 'DarkLens');
-        print('Video guardado en la galería (Álbum DarkLens)');
+        print('Video guardado en la galería');
       }
     } catch (e) {
       print('Error stopping recording: $e');
@@ -188,41 +188,34 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildCameraButton(
-                  title: 'PRINCIPAL',
-                  icon: Icons.camera_rear,
-                  color: Colors.red.shade700,
-                  onTap: () => _startRecording(CameraLensDirection.back),
-                ),
-                const SizedBox(height: 60),
-                _buildCameraButton(
-                  title: 'FRONTAL',
-                  icon: Icons.camera_front,
-                  color: Colors.indigo.shade600,
-                  onTap: () => _startRecording(CameraLensDirection.front),
-                ),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildCameraButton(
+              title: 'PRINCIPAL',
+              icon: Icons.camera_rear,
+              color: Colors.red.shade700,
+              onTap: () => _startRecording(CameraLensDirection.back),
             ),
-          ),
-          // Mostrar banner abajo si está cargado
-          if (_isAdLoaded && _bannerAd != null)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SafeArea(
-                child: SizedBox(
-                  width: _bannerAd!.size.width.toDouble(),
-                  height: _bannerAd!.size.height.toDouble(),
-                  child: AdWidget(ad: _bannerAd!),
-                ),
+            const SizedBox(height: 60),
+            _buildCameraButton(
+              title: 'FRONTAL',
+              icon: Icons.camera_front,
+              color: Colors.indigo.shade600,
+              onTap: () => _startRecording(CameraLensDirection.front),
+            ),
+            // Banner re-ubicado debajo de los botones principales
+            if (_isAdLoaded && _bannerAd != null) ...[
+              const SizedBox(height: 80), // Espacio largo para que no estorbe
+              SizedBox(
+                width: _bannerAd!.size.width.toDouble(),
+                height: _bannerAd!.size.height.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
               ),
-            ),
-        ],
+            ]
+          ],
+        ),
       ),
     );
   }
