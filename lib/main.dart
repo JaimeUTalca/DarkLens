@@ -28,7 +28,103 @@ class DarkVideoApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'DarkLens',
       theme: ThemeData.dark(),
-      home: const MainDarkVideoScreen(),
+      home: const DisclaimerScreen(),
+    );
+  }
+}
+
+class DisclaimerScreen extends StatelessWidget {
+  const DisclaimerScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 36),
+                  SizedBox(width: 12),
+                  Text(
+                    'Términos y Uso Ético',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    '''La aplicación DarkLens ha sido diseñada exclusivamente para fines de seguridad personal, periodismo ciudadano y documentación ética.\n\nEl uso de esta aplicación para grabar a personas sin su consentimiento puede violar estrictas leyes de privacidad locales, estatales o nacionales.\n\nEl desarrollador y los creadores de DarkLens se desligan legal, penal y civilmente de cualquier responsabilidad derivada del mal uso de esta herramienta.\n\nRESGUARDOS IMPORTANTES OBLIGATORIOS:\n\n1. Asegúrate de conocer y acatar plenamente las leyes de grabación de audio y video de tu país (ej. leyes de consentimiento de una o dos partes).\n2. Queda estrictamente prohibido utilizar esta aplicación en áreas donde exista una expectativa razonable de privacidad (ej. baños, vestidores, propiedad privada ajena).\n3. Nunca utilices esta aplicación para realizar actos de acoso, difamación, espionaje o cualquier otro propósito de naturaleza ilícita o inmoral.\n\nAl pulsar "ACEPTAR", declaras que eres mayor de edad, que cumplirás con las leyes aplicables y asumes la total, exclusiva y absoluta responsabilidad de tus actos de grabación.''',
+                    style: TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade800,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainDarkVideoScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'ACEPTAR Y CONTINUAR',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: TextButton(
+                  onPressed: () {
+                    // Cerrar la app
+                    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  },
+                  child: const Text(
+                    'RECHAZAR Y SALIR',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -152,7 +248,7 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
       if (controller.value.isRecordingVideo) {
         final XFile videoFile = await controller.stopVideoRecording();
         await Gal.putVideo(videoFile.path, album: 'DarkLens');
-        print('Video guardado en la galería');
+        print('Video guardado en la galería (Álbum DarkLens)');
       }
     } catch (e) {
       print('Error stopping recording: $e');
@@ -207,7 +303,7 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
             ),
             // Banner re-ubicado debajo de los botones principales
             if (_isAdLoaded && _bannerAd != null) ...[
-              const SizedBox(height: 80), // Espacio largo para que no estorbe
+              const SizedBox(height: 80),
               SizedBox(
                 width: _bannerAd!.size.width.toDouble(),
                 height: _bannerAd!.size.height.toDouble(),
