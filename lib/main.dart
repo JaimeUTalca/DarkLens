@@ -31,14 +31,10 @@ final Map<String, Map<String, String>> _localizedStrings = {
 };
 
 String _t(String key) {
-  // Obtener el idioma nativo del teléfono
   String languageCode = ui.PlatformDispatcher.instance.locale.languageCode;
-  
-  // Si el teléfono no está en español, el inglés será el idioma de fábrica/universal
   if (languageCode != 'es') {
     languageCode = 'en';
   }
-  
   return _localizedStrings[languageCode]?[key] ?? key;
 }
 // ------------------------------------------
@@ -92,15 +88,15 @@ class DisclaimerScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 36),
+                  Icon(Icons.warning_amber_rounded, color: Colors.grey.shade600, size: 36),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       _t('title'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.grey.shade300,
                       ),
                     ),
                   ),
@@ -114,7 +110,7 @@ class DisclaimerScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       height: 1.5,
-                      color: Colors.grey.shade300,
+                      color: Colors.grey.shade500,
                     ),
                   ),
                 ),
@@ -125,7 +121,7 @@ class DisclaimerScreen extends StatelessWidget {
                 height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade800,
+                    backgroundColor: Colors.grey.shade800,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -149,8 +145,8 @@ class DisclaimerScreen extends StatelessWidget {
                   child: Text(
                     _t('accept'),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Colors.grey.shade300,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -164,14 +160,13 @@ class DisclaimerScreen extends StatelessWidget {
                 height: 55,
                 child: TextButton(
                   onPressed: () {
-                    // Cerrar la app
                     SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                   },
                   child: Text(
                     _t('reject'),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.grey,
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
                       fontSize: 16,
                     ),
                   ),
@@ -201,8 +196,8 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
   bool _isAdLoaded = false;
 
   final String _adUnitId = Platform.isAndroid 
-      ? 'ca-app-pub-4566173049235624/3975499794' // Real Android Ad
-      : 'ca-app-pub-4566173049235624/3975499794'; // Real iOS Ad
+      ? 'ca-app-pub-4566173049235624/3975499794' 
+      : 'ca-app-pub-4566173049235624/3975499794';
 
   @override
   void initState() {
@@ -347,18 +342,16 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
             _buildCameraButton(
               title: _t('rear'),
               icon: Icons.camera_rear,
-              color: Colors.red.shade700,
               onTap: () => _startRecording(CameraLensDirection.back),
             ),
             const SizedBox(height: 60),
             _buildCameraButton(
               title: _t('front'),
               icon: Icons.camera_front,
-              color: Colors.indigo.shade600,
               onTap: () => _startRecording(CameraLensDirection.front),
             ),
             if (_isAdLoaded && _bannerAd != null) ...[
-              const SizedBox(height: 80), // Espacio largo para que no estorbe
+              const SizedBox(height: 80), 
               SizedBox(
                 width: _bannerAd!.size.width.toDouble(),
                 height: _bannerAd!.size.height.toDouble(),
@@ -374,7 +367,6 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
   Widget _buildCameraButton({
     required String title,
     required IconData icon,
-    required Color color,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -383,11 +375,12 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
         width: 240,
         height: 80,
         decoration: BoxDecoration(
-          color: color,
+          color: const Color(0xFF131313), // Casi negro, gris muy muy oscuro
           borderRadius: BorderRadius.circular(40),
+          border: Border.all(color: const Color(0xFF2C2C2C), width: 1.5), // Borde tenue
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.5),
+              color: Colors.black.withOpacity(0.8),
               blurRadius: 15,
               offset: const Offset(0, 8),
             )
@@ -396,12 +389,12 @@ class _MainDarkVideoScreenState extends State<MainDarkVideoScreen> with WidgetsB
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 30),
+            Icon(icon, color: Colors.grey.shade600, size: 30),
             const SizedBox(width: 12),
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Colors.grey.shade500, // Texto opacado, sin brillo
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.5,
